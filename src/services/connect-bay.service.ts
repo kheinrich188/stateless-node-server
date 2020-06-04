@@ -70,7 +70,7 @@ export class ConnectBayService {
         });
 
         this._server.listen(serverPort, () => {
-            console.info(`Server Bay starts at port ${serverPort}`);
+            console.info(`Server Bay starts at ws://localhost:${serverPort}`);
         });
     }
 

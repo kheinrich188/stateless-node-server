@@ -89,7 +89,7 @@ export class ServerModel implements IServerModel {
     }
 
     private _handleConnect(connectMessage: IServerConnectMessage) {
-        console.error(connectMessage);
+        console.log('Server connected');
         clearTimeout(this._timer);
         this.ip = connectMessage.address.split('?')[0];
         this.port = connectMessage.port;
