@@ -8,7 +8,8 @@ export class PostgresService {
     }
 
     constructor() {
-        this._client = new Client({ host: 'localhost', port: 5433, user: 'konstantinheinrich', database: 'konstantinheinrich' });
+        const port = Number(process.env.POSTGRESPORT) || 5432;
+        this._client = new Client({ host: 'localhost', port, user: 'postgres', database: 'postgres' });
     }
 
     connect(): Promise<Client> {
@@ -17,9 +18,6 @@ export class PostgresService {
                 console.log('postgres connected');
                 this.createTables();
                 return this._client;
-            })
-            .catch((error) => {
-                throw error;
             });
     }
 
