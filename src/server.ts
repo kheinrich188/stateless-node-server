@@ -10,7 +10,7 @@ const _ = new ConnectBayService(postgresService, 9999);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`Server is running in http://localhost:${PORT}`);
+    console.log(`App is running in http://localhost:${PORT}`);
     postgresService.connect()
         .then(() => {
             const serverRepo = new ServerRepo(postgresService);

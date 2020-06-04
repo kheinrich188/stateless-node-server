@@ -3,8 +3,7 @@ import { v4 } from 'uuid';
 
 const server = new net.Socket();
 const generateRandomClient = () => ({ query: { token: v4() } });
-// const generateAwsIp = () => `http://aws-id-${v4()}`;
-const generateAwsIp = () => 'http://aws-id-2b24314d-bcf6-4841-80ed-9a9ac39f3529';
+const generateAwsIp = () => `http://aws-id-${v4()}`;
 const clients = [generateRandomClient()];
 
 const address = 'localhost';

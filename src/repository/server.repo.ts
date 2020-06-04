@@ -1,11 +1,6 @@
 import { PostgresService } from '../services/postgres.service';
 import { IServerModel, ServerModel, ServerStatus } from '../models/server.model';
 import { zipObject, isEmpty } from 'lodash';
-import moment from 'moment';
-
-const ServerQueries = {
-    SelectAll: 'SELECT * FROM server'
-};
 
 export class ServerRepo {
     private _postgresService: PostgresService;
@@ -17,7 +12,7 @@ export class ServerRepo {
     async all(): Promise<IServerModel[]> {
         try {
             const result = await this._postgresService.client
-                .query(ServerQueries.SelectAll);
+                .query('SELECT * FROM server');
 
             const jsonResult: IServerModel[] = [];
 
@@ -37,10 +32,9 @@ export class ServerRepo {
             if (!isEmpty(existingServer)) {
                 await this.updateId(existingServer._id, serverModel._id);
             } else {
-                const date = moment().format('YYYY-MM-DD HH:mm:ss');
                 await this._postgresService.client
                     .query(
-                        `INSERT INTO server (ip, _id, port, type, status, created_on) VALUES ('${serverModel.ip}', '${serverModel._id}', '${serverModel.port}', '${serverModel.type}', ${serverModel.status}, '${date}')`
+                        `INSERT INTO server (ip, _id, port, type, status, created_on) VALUES ('${serverModel.ip}', '${serverModel._id}', '${serverModel.port}', '${serverModel.type}', ${serverModel.status}, '${serverModel.created_on.format('YYYY-MM-DD HH:mm:ss')}')`
                     );
             }
         } catch (e) {

@@ -46,6 +46,7 @@ export class ServerModel implements IServerModel {
 
     constructor(serverRepo: ServerRepo, id: string) {
         this._serverRepo = serverRepo;
+        this.created_on = moment();
         this._id = id;
     }
 

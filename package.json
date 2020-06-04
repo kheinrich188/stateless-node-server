@@ -4,10 +4,10 @@
   "description": "",
   "scripts": {
     "start": "node --inspect=5858 -r ts-node/register ./src/server.ts",
-    "startServer": "node -r ts-node/register ./external/ext.server.ts",
     "start:watch": "nodemon",
     "build": "tsc",
-    "test": "mocha -r ts-node/register src/**/*.spec.ts"
+    "test": "mocha -r ts-node/register src/**/*.spec.ts",
+    "startExtServer": "node -r ts-node/register ./external/ext.server.ts"
   },
   "author": "",
   "dependencies": {
