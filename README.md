@@ -20,8 +20,6 @@ Am einfachsten geht das über:
 Nachdem das Repository geklont wurde:
 > `npm install`
 
-Eventuell musst du den Port im 
-
 Starte die Anwendung
 > `npm run start`
 
