@@ -8,8 +8,12 @@ export class PostgresService {
     }
 
     constructor() {
+        const host = process.env.POSTGRES_HOST || 'localhost';
         const port = Number(process.env.POSTGRESPORT) || 5432;
-        this._client = new Client({ host: 'localhost', port, user: 'postgres', database: 'postgres' });
+        const user = process.env.POSTGRES_USER || 'postgres';
+        const password = process.env.POSTGRES_PW || '';
+        const database = process.env.POSTGRES_DB || 'postgres';
+        this._client = new Client({ host, port, user, password, database });
     }
 
     connect(): Promise<Client> {

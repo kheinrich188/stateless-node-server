@@ -8,8 +8,8 @@ const clients = [generateRandomClient()];
 
 const address = 'localhost';
 const port = 9999;
-const serverPublicIp = process.env.SPI || `${generateAwsIp()}?instanceType=big`;
-const serverPublicPort = process.env.SPP || 80;
+const serverPublicIp = `${generateAwsIp()}?instanceType=big`;
+const serverPublicPort = 80;
 
 const connect = () => {
     server.connect(port, address);

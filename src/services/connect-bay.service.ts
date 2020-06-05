@@ -15,9 +15,9 @@ export class ConnectBayService {
     private _cloudInstanceWebSocketServer: Server;
     private _cloudInstanceRepo: CloudInstanceRepo;
 
-    constructor(postgresService: PostgresService, serverPort: number) {
+    constructor(postgresService: PostgresService, cloudInstancePort: number) {
         this._cloudInstanceRepo = new CloudInstanceRepo(postgresService);
-        this._createServer(serverPort);
+        this._createServer(cloudInstancePort);
     }
 
     private _createServer(serverPort: number) {

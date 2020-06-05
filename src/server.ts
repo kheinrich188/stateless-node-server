@@ -4,9 +4,14 @@ import { ConnectBayService } from './services/connect-bay.service';
 import { CloudInstanceRepo } from './repository/cloud-instance.repo';
 import { Routes } from './routes/routes';
 import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
+
+// initialize configuration
+dotenv.config();
 
 // env
-const PORT = process.env.PORT || 3000;
+const appPort = process.env.APP_PORT || 3000;
+const cloudInstancePort = Number(process.env.CLOUD_INSTANCE_PORT) || 9999;
 
 const app: Application = express();
 const postgresService = new PostgresService();
@@ -20,9 +25,9 @@ routes.setupRoutes(app);
 
 postgresService.connect()
     .then(() => {
-        const _ = new ConnectBayService(postgresService, 9999);
-        app.listen(PORT, () => {
-            console.log(`App is running in http://localhost:${PORT}`);
+        const _ = new ConnectBayService(postgresService, cloudInstancePort);
+        app.listen(appPort, () => {
+            console.log(`App is running in http://localhost:${appPort}`);
             setInterval(async () => {
                 const result = await cloudInstanceRepo.all();
                 console.table(result);

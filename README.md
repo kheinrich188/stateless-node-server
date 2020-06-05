@@ -28,6 +28,21 @@ Starte die Anwendung
 Starten der lokalen Cloud Instanz
 > `npm run start-cloud-instance`
 
+Folgende Variablen können mit einer `.env` Datei überschrieben werden: 
+```
+# Set to production when deploying to production
+NODE_ENV=dev
+
+# Node.js server configuration
+APP_PORT=3000
+CLOUD_INSTANCE_PORT=9999
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PW=
+POSTGRES_HOST=localhost
+POSTGRES_DB=postgres
+```
+
 Nun sollte in der Konsole eine Tabelle zu sehen sein in dem der Status deiner Instanz gehalten wird. 
 
 ## Ansatz
