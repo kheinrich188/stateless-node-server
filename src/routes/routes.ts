@@ -9,8 +9,13 @@ const ROUTES = {
 };
 
 export class Routes {
-    static setupRoutes(app: Application, cloudInstanceRepo: CloudInstanceRepo) {
-        const apiController = new ApiController(cloudInstanceRepo);
+    private readonly cloudInstanceRepo: CloudInstanceRepo;
+    constructor(cloudInstanceRepo: CloudInstanceRepo) {
+        this.cloudInstanceRepo = cloudInstanceRepo;
+    }
+
+    setupRoutes(app: Application) {
+        const apiController = new ApiController(this.cloudInstanceRepo);
 
         app.route(ROUTES.Api.state)
             .get((req, res) => apiController.state(req, res));

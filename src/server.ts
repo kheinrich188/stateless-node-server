@@ -15,7 +15,8 @@ app.use(bodyParser.json());
 
 const cloudInstanceRepo = new CloudInstanceRepo(postgresService);
 
-Routes.setupRoutes(app, cloudInstanceRepo);
+const routes = new Routes(cloudInstanceRepo);
+routes.setupRoutes(app);
 
 postgresService.connect()
     .then(() => {
