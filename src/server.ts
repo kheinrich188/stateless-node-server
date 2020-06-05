@@ -23,17 +23,19 @@ const cloudInstanceRepo = new CloudInstanceRepo(postgresService);
 const routes = new Routes(cloudInstanceRepo);
 routes.setupRoutes(app);
 
-postgresService.connect()
-    .then(() => {
-        const _ = new ConnectBayService(postgresService, cloudInstancePort);
-        app.listen(appPort, () => {
-            console.log(`App is running in http://localhost:${appPort}`);
-            setInterval(async () => {
-                const result = await cloudInstanceRepo.all();
-                console.table(result);
-            }, 5000);
-        });
+(async () => {
+    await postgresService.connect();
+
+    const _ = new ConnectBayService(postgresService, cloudInstancePort);
+
+    app.listen(appPort, () => {
+        console.log(`App is running in http://localhost:${appPort}`);
+        setInterval(async () => {
+            const result = await cloudInstanceRepo.all();
+            console.table(result);
+        }, 5000);
     });
+})();
 
 // if something crashes last fetch here
 process.on('uncaughtException', (error: Error) => {

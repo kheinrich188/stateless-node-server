@@ -18,12 +18,14 @@ export class PostgresService {
         this._client = new Client({ host, port, user, password, database });
     }
 
-    connect(): Promise<Client> {
+    async connect(): Promise<void> {
         return this._client.connect()
             .then(() => {
                 console.log('postgres connected');
                 this.createTables();
-                return this._client;
+            })
+            .catch(error => {
+                console.error(error);
             });
     }
 
