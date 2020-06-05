@@ -1,23 +1,23 @@
 import { PostgresService } from '../services/postgres.service';
-import { IServerModel, ServerModel, ServerStatus } from '../models/server.model';
+import { ICloudInstance, ServerModel, CloudInstanceStatus } from '../models/server.model';
 import { zipObject, isEmpty } from 'lodash';
 
-export class ServerRepo {
+export class CloudInstanceRepo {
     private _postgresService: PostgresService;
 
     constructor(postgresService: PostgresService) {
         this._postgresService = postgresService;
     }
 
-    async all(): Promise<IServerModel[]> {
+    async all(): Promise<ICloudInstance[]> {
         try {
             const result = await this._postgresService.client
                 .query('SELECT * FROM server');
 
-            const jsonResult: IServerModel[] = [];
+            const jsonResult: ICloudInstance[] = [];
 
             for (const row of result) {
-                const am = zipObject(row.names, row.data) as unknown as IServerModel;
+                const am = zipObject(row.names, row.data) as unknown as ICloudInstance;
                 jsonResult.push(am);
             }
             return jsonResult;
@@ -42,7 +42,7 @@ export class ServerRepo {
         }
     }
 
-    async updateStatus(_id: string, status: ServerStatus) {
+    async updateStatus(_id: string, status: CloudInstanceStatus) {
         try {
             await this._postgresService.client
                 .query(
@@ -75,15 +75,15 @@ export class ServerRepo {
         }
     }
 
-    async get(_id: string): Promise<IServerModel> {
+    async get(_id: string): Promise<ICloudInstance> {
         try {
             const exec = await this._postgresService.client
                 .query(
                     `SELECT * from server where _id = '${_id}'`
                 );
-            let result: IServerModel;
+            let result: ICloudInstance;
             for (const row of exec) {
-                result = zipObject(row.names, row.data) as unknown as IServerModel;
+                result = zipObject(row.names, row.data) as unknown as ICloudInstance;
             }
             return result;
         } catch (e) {
@@ -91,15 +91,15 @@ export class ServerRepo {
         }
     }
 
-    async getBy(field: string, value: any): Promise<IServerModel> {
+    async getBy(field: string, value: any): Promise<ICloudInstance> {
         try {
             const exec = await this._postgresService.client
                 .query(
                     `SELECT * from server where ${field} = '${value}'`
                 );
-            let result: IServerModel;
+            let result: ICloudInstance;
             for (const row of exec) {
-                result = zipObject(row.names, row.data) as unknown as IServerModel;
+                result = zipObject(row.names, row.data) as unknown as ICloudInstance;
             }
             return result;
         } catch (e) {

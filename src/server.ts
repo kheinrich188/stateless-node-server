@@ -1,9 +1,8 @@
 import express, { Application } from 'express';
 import { PostgresService } from './services/postgres.service';
 import { ConnectBayService } from './services/connect-bay.service';
-import { ServerRepo } from './repository/server.repo';
+import { CloudInstanceRepo } from './repository/cloud-instance.repo';
 import { Routes } from './routes/routes';
-import { ApiController } from './controller/api.controller';
 import bodyParser from 'body-parser';
 
 // env
@@ -14,9 +13,9 @@ const postgresService = new PostgresService();
 
 app.use(bodyParser.json());
 
-const serverRepo = new ServerRepo(postgresService);
+const cloudInstanceRepo = new CloudInstanceRepo(postgresService);
 
-Routes.setupRoutes(app, serverRepo);
+Routes.setupRoutes(app, cloudInstanceRepo);
 
 postgresService.connect()
     .then(() => {
@@ -24,7 +23,7 @@ postgresService.connect()
         app.listen(PORT, () => {
             console.log(`App is running in http://localhost:${PORT}`);
             setInterval(async () => {
-                const result = await serverRepo.all();
+                const result = await cloudInstanceRepo.all();
                 console.table(result);
             }, 5000);
         });

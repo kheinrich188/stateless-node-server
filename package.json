@@ -7,7 +7,7 @@
     "start:watch": "nodemon",
     "build": "tsc",
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
-    "start-cloud-instance": "node -r ts-node/register ./external/ext.server.ts"
+    "start-cloud-instance": "node -r ts-node/register ./external/cloud-instance.server.ts"
   },
   "author": "",
   "dependencies": {

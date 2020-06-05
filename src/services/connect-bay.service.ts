@@ -2,7 +2,7 @@ import net, { Server, Socket } from 'net';
 import { v4 } from 'uuid';
 import { ServerModel } from '../models/server.model';
 import { PostgresService } from './postgres.service';
-import { ServerRepo } from '../repository/server.repo';
+import { CloudInstanceRepo } from '../repository/cloud-instance.repo';
 
 declare module 'net' {
     interface Socket {
@@ -12,16 +12,16 @@ declare module 'net' {
 }
 
 export class ConnectBayService {
-    private _server: Server;
-    private serverRepo: ServerRepo;
+    private _cloudInstanceWebSocketServer: Server;
+    private _cloudInstanceRepo: CloudInstanceRepo;
 
     constructor(postgresService: PostgresService, serverPort: number) {
-        this.serverRepo = new ServerRepo(postgresService);
+        this._cloudInstanceRepo = new CloudInstanceRepo(postgresService);
         this._createServer(serverPort);
     }
 
     private _createServer(serverPort: number) {
-        this._server = net.createServer((socket) => {
+        this._cloudInstanceWebSocketServer = net.createServer((socket) => {
             socket.heartBeatInterval = null;
             socket.setNoDelay();
             socket.setTimeout(10000, () => {
@@ -31,12 +31,11 @@ export class ConnectBayService {
 
             socket.id = v4();
 
-            const serverModel = new ServerModel(this.serverRepo, socket.id);
+            const serverModel = new ServerModel(this._cloudInstanceRepo, socket.id);
             socket.on('data', (data: Buffer) => {
                 try {
                     // todo: validate message before handling it
                     serverModel.handleMessage(data);
-                    // console.error(data);
                 } catch (e) {
                     console.error(socket.id, 'socket:data', e);
                     socket.emit('close', 1008, 'Cannot parse');
@@ -69,7 +68,7 @@ export class ConnectBayService {
             console.error(error.message);
         });
 
-        this._server.listen(serverPort, () => {
+        this._cloudInstanceWebSocketServer.listen(serverPort, () => {
             console.info(`Server Bay starts at ws://localhost:${serverPort}`);
         });
     }
@@ -86,6 +85,6 @@ export class ConnectBayService {
 
     private _clearServerConnection(socketId: string, message: string) {
         console.info(socketId, message);
-        this.serverRepo.delete(socketId);
+        this._cloudInstanceRepo.delete(socketId);
     }
 }

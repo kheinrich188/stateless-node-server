@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
-import { ServerRepo } from '../repository/server.repo';
+import { CloudInstanceRepo } from '../repository/cloud-instance.repo';
 
 export class ApiController {
-    private serverRepo: ServerRepo;
+    private _cloudInstanceRepo: CloudInstanceRepo;
 
-    constructor(serverRepo: ServerRepo) {
-        this.serverRepo = serverRepo;
+    constructor(cloudInstanceRepo: CloudInstanceRepo) {
+        this._cloudInstanceRepo = cloudInstanceRepo;
     }
 
     async state(req: Request, res: Response) {
-        const result = await this.serverRepo.all();
+        const result = await this._cloudInstanceRepo.all();
         res.json({ result });
     }
 }

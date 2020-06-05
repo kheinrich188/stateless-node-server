@@ -1,31 +1,31 @@
-import { ServerRepo } from '../repository/server.repo';
+import { CloudInstanceRepo } from '../repository/cloud-instance.repo';
 import moment from 'moment';
 
-export interface IServersMessage {
-    type: ServerMessageTypes;
+export interface ICloudInstanceMessage {
+    type: CloudInstanceMessageTypes;
 }
-export interface IServerConnectMessage extends IServersMessage {
+export interface ICloudInstanceConnectMessage extends ICloudInstanceMessage {
     address: string;
     port: string;
     connectedUser: string;
 }
-export interface IServerConnectionMessage extends IServersMessage {
+export interface ICloudInstanceConnectionMessage extends ICloudInstanceMessage {
     token: string;
 }
 
-export enum ServerMessageTypes {
+export enum CloudInstanceMessageTypes {
     connect = 'connect',
     clientConnected = 'clientConnected',
     clientDisconnected = 'clientDisconnected',
     pong = 'pong',
 }
 
-export enum ServerStatus {
+export enum CloudInstanceStatus {
     Waiting,
     Working
 }
 
-export interface IServerModel {
+export type ICloudInstance = {
     ip: string;
     _id: string;
     port: string;
@@ -34,50 +34,50 @@ export interface IServerModel {
     created_on: moment.Moment;
 }
 
-export class ServerModel implements IServerModel {
+export class ServerModel implements ICloudInstance {
     _id: string
     ip: string;
     port: string;
     type: string;
-    status: ServerStatus = ServerStatus.Waiting;
+    status: CloudInstanceStatus = CloudInstanceStatus.Waiting;
     created_on: moment.Moment;
     private _timer: NodeJS.Timeout;
-    private _serverRepo: ServerRepo;
+    private _cloudInstanceRepo: CloudInstanceRepo;
 
-    constructor(serverRepo: ServerRepo, id: string) {
-        this._serverRepo = serverRepo;
+    constructor(cloudInstanceRepo: CloudInstanceRepo, id: string) {
+        this._cloudInstanceRepo = cloudInstanceRepo;
         this.created_on = moment();
         this._id = id;
     }
 
     handleMessage(data: Buffer) {
-        let serverMessage = null;
+        let cloudInstanceMessage = null;
         const dataString = data.toString();
         try {
-            serverMessage = JSON.parse(dataString) as IServersMessage;
+            cloudInstanceMessage = JSON.parse(dataString) as ICloudInstanceMessage;
         } catch (err) {
             console.error('Could not handle cirrus message with data=', dataString);
             throw err;
         }
-        switch (serverMessage.type) {
-        case ServerMessageTypes.connect:
-            const connectMessage = JSON.parse(dataString) as IServerConnectMessage;
+        switch (cloudInstanceMessage.type) {
+        case CloudInstanceMessageTypes.connect:
+            const connectMessage = JSON.parse(dataString) as ICloudInstanceConnectMessage;
             this._handleConnect(connectMessage);
             break;
-        case ServerMessageTypes.clientConnected:
-            const clientConnected = JSON.parse(dataString) as IServerConnectionMessage;
+        case CloudInstanceMessageTypes.clientConnected:
+            const clientConnected = JSON.parse(dataString) as ICloudInstanceConnectionMessage;
             this._handleClientConnect(clientConnected);
             break;
-        case ServerMessageTypes.clientDisconnected:
-            const clientDisconnected = JSON.parse(dataString) as IServerConnectionMessage;
+        case CloudInstanceMessageTypes.clientDisconnected:
+            const clientDisconnected = JSON.parse(dataString) as ICloudInstanceConnectionMessage;
             console.error(clientDisconnected);
             break;
-        case ServerMessageTypes.pong: {
+        case CloudInstanceMessageTypes.pong: {
             this._heartBeat();
             break;
         }
         default:
-            console.error(serverMessage.type);
+            console.error(cloudInstanceMessage.type);
         }
     }
 
@@ -88,19 +88,19 @@ export class ServerModel implements IServerModel {
         }, 5000);
     }
 
-    private _handleConnect(connectMessage: IServerConnectMessage) {
+    private _handleConnect(connectMessage: ICloudInstanceConnectMessage) {
         console.log('Server connected');
         clearTimeout(this._timer);
         this.ip = connectMessage.address.split('?')[0];
         this.port = connectMessage.port;
         this.type = connectMessage.address.split('?')[1];
-        this._serverRepo.create(this)
+        this._cloudInstanceRepo.create(this)
             .catch(error => {
                 console.error(error);
             });
     }
 
-    private _handleClientConnect(clientConnected: IServerConnectionMessage) {
+    private _handleClientConnect(clientConnected: ICloudInstanceConnectionMessage) {
         console.error(clientConnected);
     }
 }

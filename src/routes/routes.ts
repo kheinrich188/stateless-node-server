@@ -1,6 +1,6 @@
 import { Application } from 'express';
 import { ApiController } from '../controller/api.controller';
-import { ServerRepo } from '../repository/server.repo';
+import { CloudInstanceRepo } from '../repository/cloud-instance.repo';
 
 const ROUTES = {
     Api: {
@@ -9,8 +9,8 @@ const ROUTES = {
 };
 
 export class Routes {
-    static setupRoutes(app: Application, serverRepo: ServerRepo) {
-        const apiController = new ApiController(serverRepo);
+    static setupRoutes(app: Application, cloudInstanceRepo: CloudInstanceRepo) {
+        const apiController = new ApiController(cloudInstanceRepo);
 
         app.route(ROUTES.Api.state)
             .get((req, res) => apiController.state(req, res));
