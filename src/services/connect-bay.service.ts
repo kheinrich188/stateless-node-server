@@ -85,6 +85,8 @@ export class ConnectBayService {
 
     private _clearServerConnection(socketId: string, message: string) {
         console.info(socketId, message);
-        this._cloudInstanceRepo.delete(socketId);
+        (async () => {
+            await this._cloudInstanceRepo.delete(socketId);
+        })();
     }
 }

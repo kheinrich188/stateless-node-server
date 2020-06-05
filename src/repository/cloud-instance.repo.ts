@@ -1,6 +1,8 @@
-import { CloudInstanceTableName, PostgresService } from '../services/postgres.service';
+import { PostgresService } from '../services/postgres.service';
 import { ICloudInstance, CloudInstanceModel, CloudInstanceStatus } from '../models/cloud-instance.model';
 import { zipObject, isEmpty } from 'lodash';
+
+export const CloudInstanceTableName = `cloudinstances_${process.env.NODE_ENV}`;
 
 export class CloudInstanceRepo {
     private _postgresService: PostgresService;

@@ -1,6 +1,5 @@
 import { Client } from 'ts-postgres';
-
-export const CloudInstanceTableName = `cloudinstances_${process.env.NODE_ENV}`;
+import { CloudInstanceTableName } from '../repository/cloud-instance.repo';
 
 export class PostgresService {
     private readonly _client: Client;
