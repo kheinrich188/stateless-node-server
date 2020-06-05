@@ -54,5 +54,7 @@ Alle befehle vom Client zum Steuern gehen über den Matchmaker, damit ein Tracki
 
 Alle getrackten Daten sollten ebenfalls in einer Datenbank landen 
 
+Testsetup welches mehrere Node Anwendungen hinter einem Load Balancer startet und auch mehrere Cloud Instanzen die sich dann verbinden wollen. 
+
 
 
