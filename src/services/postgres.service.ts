@@ -24,7 +24,7 @@ export class PostgresService {
     createTables() {
         try {
             this.client.query(
-                `CREATE TABLE server
+                `CREATE TABLE cloudinstances
                  (
                      id         serial PRIMARY KEY,
                      _id        VARCHAR(355) UNIQUE NOT NULL,

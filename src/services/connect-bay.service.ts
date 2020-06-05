@@ -1,6 +1,6 @@
 import net, { Server, Socket } from 'net';
 import { v4 } from 'uuid';
-import { ServerModel } from '../models/server.model';
+import { CloudInstanceModel } from '../models/cloud-instance.model';
 import { PostgresService } from './postgres.service';
 import { CloudInstanceRepo } from '../repository/cloud-instance.repo';
 
@@ -31,11 +31,11 @@ export class ConnectBayService {
 
             socket.id = v4();
 
-            const serverModel = new ServerModel(this._cloudInstanceRepo, socket.id);
+            const cloudInstance = new CloudInstanceModel(this._cloudInstanceRepo, socket.id);
             socket.on('data', (data: Buffer) => {
                 try {
                     // todo: validate message before handling it
-                    serverModel.handleMessage(data);
+                    cloudInstance.handleMessage(data);
                 } catch (e) {
                     console.error(socket.id, 'socket:data', e);
                     socket.emit('close', 1008, 'Cannot parse');

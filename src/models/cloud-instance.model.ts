@@ -34,7 +34,7 @@ export type ICloudInstance = {
     created_on: moment.Moment;
 }
 
-export class ServerModel implements ICloudInstance {
+export class CloudInstanceModel implements ICloudInstance {
     _id: string
     ip: string;
     port: string;
