@@ -1,5 +1,7 @@
 import { Client } from 'ts-postgres';
 
+export const CloudInstanceTableName = `cloudinstances_${process.env.NODE_ENV}`;
+
 export class PostgresService {
     private readonly _client: Client;
 
@@ -28,7 +30,7 @@ export class PostgresService {
     createTables() {
         try {
             this.client.query(
-                `CREATE TABLE cloudinstances
+                `CREATE TABLE ${CloudInstanceTableName}
                  (
                      id         serial PRIMARY KEY,
                      _id        VARCHAR(355) UNIQUE NOT NULL,

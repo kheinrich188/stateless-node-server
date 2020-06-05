@@ -1,4 +1,4 @@
-import { PostgresService } from '../services/postgres.service';
+import { CloudInstanceTableName, PostgresService } from '../services/postgres.service';
 import { ICloudInstance, CloudInstanceModel, CloudInstanceStatus } from '../models/cloud-instance.model';
 import { zipObject, isEmpty } from 'lodash';
 
@@ -12,7 +12,7 @@ export class CloudInstanceRepo {
     async all(): Promise<ICloudInstance[]> {
         try {
             const result = await this._postgresService.client
-                .query('SELECT * FROM cloudinstances');
+                .query(`SELECT * FROM ${CloudInstanceTableName}`);
 
             const jsonResult: ICloudInstance[] = [];
 
@@ -34,7 +34,7 @@ export class CloudInstanceRepo {
             } else {
                 await this._postgresService.client
                     .query(
-                        `INSERT INTO cloudinstances (ip, _id, port, type, status, created_on) VALUES ('${serverModel.ip}', '${serverModel._id}', '${serverModel.port}', '${serverModel.type}', ${serverModel.status}, '${serverModel.created_on.format('YYYY-MM-DD HH:mm:ss')}')`
+                        `INSERT INTO ${CloudInstanceTableName} (ip, _id, port, type, status, created_on) VALUES ('${serverModel.ip}', '${serverModel._id}', '${serverModel.port}', '${serverModel.type}', ${serverModel.status}, '${serverModel.created_on.format('YYYY-MM-DD HH:mm:ss')}')`
                     );
             }
         } catch (e) {
@@ -46,7 +46,7 @@ export class CloudInstanceRepo {
         try {
             await this._postgresService.client
                 .query(
-                    `UPDATE cloudinstances SET status = ${status} where _id = '${_id}'`
+                    `UPDATE ${CloudInstanceTableName} SET status = ${status} where _id = '${_id}'`
                 );
         } catch (e) {
             console.error(e);
@@ -57,7 +57,7 @@ export class CloudInstanceRepo {
         try {
             await this._postgresService.client
                 .query(
-                    `UPDATE cloudinstances SET _id = '${newId}' where _id = '${_id}'`
+                    `UPDATE ${CloudInstanceTableName} SET _id = '${newId}' where _id = '${_id}'`
                 );
         } catch (e) {
             console.error(e);
@@ -68,7 +68,7 @@ export class CloudInstanceRepo {
         try {
             const exec = await this._postgresService.client
                 .query(
-                    `DELETE from cloudinstances where _id = '${_id}'`
+                    `DELETE from ${CloudInstanceTableName} where _id = '${_id}'`
                 );
         } catch (e) {
             console.error(e);
@@ -79,7 +79,7 @@ export class CloudInstanceRepo {
         try {
             const exec = await this._postgresService.client
                 .query(
-                    `SELECT * from cloudinstances where _id = '${_id}'`
+                    `SELECT * from ${CloudInstanceTableName} where _id = '${_id}'`
                 );
             let result: ICloudInstance;
             for (const row of exec) {
@@ -95,7 +95,7 @@ export class CloudInstanceRepo {
         try {
             const exec = await this._postgresService.client
                 .query(
-                    `SELECT * from cloudinstances where ${field} = '${value}'`
+                    `SELECT * from ${CloudInstanceTableName} where ${field} = '${value}'`
                 );
             let result: ICloudInstance;
             for (const row of exec) {
