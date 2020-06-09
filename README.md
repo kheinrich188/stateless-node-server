@@ -55,13 +55,6 @@ Dies startet einen kleinen Server der versucht sich per Websocket mit unserem Ma
 Ähnlich ist dies auch in [Unreals Pixel Streaming](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Programs/PixelStreaming/WebServers/SignallingWebServer/cirrus.js).
  
 ## Aktuell noch in progress 
-Simulation eines Users der sich per Websocket am Matchmaker anmeldet.
-
-Er fragt eine freie Instanz über eine HTTP Schnittstelle an und bekommt die IP-Adresse der Cloud Instanz. 
-
-Mit der IP-Adresse, die der User bekommt, kann sich nun direkt mit der Instanz via `Websocket` verbinden.
-
-Sobald das erfolgreich geklappt hat, meldet die Cloud Instanz nun via `sendClientConnectedToBay()`, dass sich ein Client mit ihr Verbunden hat. 
 
 Alle befehle vom Client zum Steuern gehen über den Matchmaker, damit ein Tracking der Daten stattfinden kann, dafür benötigen wir noch eine generelle Schnittstelle die alles an die Cloud Instanz weiter leitet. 
 

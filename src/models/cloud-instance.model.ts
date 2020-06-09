@@ -70,6 +70,7 @@ export class CloudInstanceModel implements ICloudInstance {
             break;
         case CloudInstanceMessageTypes.clientDisconnected:
             const clientDisconnected = JSON.parse(dataString) as ICloudInstanceConnectionMessage;
+            this._handleClientDisconnect(clientDisconnected);
             console.error(clientDisconnected);
             break;
         case CloudInstanceMessageTypes.pong: {
@@ -101,6 +102,10 @@ export class CloudInstanceModel implements ICloudInstance {
     }
 
     private _handleClientConnect(clientConnected: ICloudInstanceConnectionMessage) {
-        console.error(clientConnected);
+        console.error(clientConnected, this.ip);
+    }
+
+    private _handleClientDisconnect(clientDisconnected: ICloudInstanceConnectionMessage) {
+        console.error(clientDisconnected, this.ip);
     }
 }
