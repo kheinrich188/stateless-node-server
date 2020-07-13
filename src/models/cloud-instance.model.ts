@@ -44,13 +44,13 @@ export class CloudInstanceModel implements ICloudInstance {
     private _timer: NodeJS.Timeout;
     private _cloudInstanceRepo: CloudInstanceRepo;
 
-    constructor(cloudInstanceRepo: CloudInstanceRepo, id: string) {
-        this._cloudInstanceRepo = cloudInstanceRepo;
+    constructor(id: string) {
+        this._cloudInstanceRepo = new CloudInstanceRepo();
         this.created_on = moment();
         this._id = id;
     }
 
-    handleMessage(data: Buffer) {
+    async handleMessage(data: Buffer) {
         let cloudInstanceMessage = null;
         const dataString = data.toString();
         try {
@@ -62,15 +62,15 @@ export class CloudInstanceModel implements ICloudInstance {
         switch (cloudInstanceMessage.type) {
         case CloudInstanceMessageTypes.connect:
             const connectMessage = JSON.parse(dataString) as ICloudInstanceConnectMessage;
-            this._handleConnect(connectMessage);
+            await this._handleConnect(connectMessage);
             break;
         case CloudInstanceMessageTypes.clientConnected:
             const clientConnected = JSON.parse(dataString) as ICloudInstanceConnectionMessage;
-            this._handleClientConnect(clientConnected);
+            await this._handleClientConnect(clientConnected);
             break;
         case CloudInstanceMessageTypes.clientDisconnected:
             const clientDisconnected = JSON.parse(dataString) as ICloudInstanceConnectionMessage;
-            this._handleClientDisconnect(clientDisconnected);
+            await this._handleClientDisconnect(clientDisconnected);
             console.error(clientDisconnected);
             break;
         case CloudInstanceMessageTypes.pong: {
@@ -89,23 +89,23 @@ export class CloudInstanceModel implements ICloudInstance {
         }, 5000);
     }
 
-    private _handleConnect(connectMessage: ICloudInstanceConnectMessage) {
+    private async _handleConnect(connectMessage: ICloudInstanceConnectMessage) {
         console.log('Server connected');
         clearTimeout(this._timer);
         this.ip = connectMessage.address.split('?')[0];
         this.port = connectMessage.port;
         this.type = connectMessage.address.split('?')[1];
-        this._cloudInstanceRepo.create(this)
+        await this._cloudInstanceRepo.create(this)
             .catch(error => {
                 console.error(error);
             });
     }
 
-    private _handleClientConnect(clientConnected: ICloudInstanceConnectionMessage) {
+    private async _handleClientConnect(clientConnected: ICloudInstanceConnectionMessage) {
         console.error(clientConnected, this.ip);
     }
 
-    private _handleClientDisconnect(clientDisconnected: ICloudInstanceConnectionMessage) {
+    private async _handleClientDisconnect(clientDisconnected: ICloudInstanceConnectionMessage) {
         console.error(clientDisconnected, this.ip);
     }
 }

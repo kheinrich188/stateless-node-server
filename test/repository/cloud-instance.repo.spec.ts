@@ -1,17 +1,20 @@
-import { before, describe, it } from 'mocha';
-import { PostgresService } from '../../src/services/postgres.service';
+import {afterEach, beforeEach, describe, it} from 'mocha';
 import { expect } from 'chai';
 import { CloudInstanceRepo } from '../../src/repository/cloud-instance.repo';
 
 describe('CloudInstance Postgres Repo', () => {
-    const dbService = new PostgresService();
-    before(async () => {
-        await dbService.connect();
+    const repo = new CloudInstanceRepo();
+
+    beforeEach(async () => {
+        await repo.clear();
+    });
+
+    afterEach(async () => {
+        await repo.clear();
     });
 
     it('should return empty server list', async () => {
-        const cloudInstanceRepo = new CloudInstanceRepo(dbService);
-        const all = await cloudInstanceRepo.all();
+        const all = await repo.all();
         expect(all.length).to.eq(0);
     });
 });

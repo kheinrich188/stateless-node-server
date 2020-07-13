@@ -1,6 +1,5 @@
 import { Application } from 'express';
 import { ApiController } from '../controller/api.controller';
-import { CloudInstanceRepo } from '../repository/cloud-instance.repo';
 
 const ROUTES = {
     Api: {
@@ -10,17 +9,12 @@ const ROUTES = {
 };
 
 export class Routes {
-    private readonly cloudInstanceRepo: CloudInstanceRepo;
-    constructor(cloudInstanceRepo: CloudInstanceRepo) {
-        this.cloudInstanceRepo = cloudInstanceRepo;
-    }
-
-    setupRoutes(app: Application) {
-        const apiController = new ApiController(this.cloudInstanceRepo);
+    static setupRoutes(app: Application) {
+        const apiController = new ApiController();
 
         app.route(ROUTES.Api.state)
-            .get((req, res) => apiController.state(req, res));
+            .get(apiController.state);
         app.route(ROUTES.Api.requestCloudInstance)
-            .get((req, res) => apiController.requestCloudInstance(req, res));
+            .get(apiController.requestCloudInstance);
     }
 }

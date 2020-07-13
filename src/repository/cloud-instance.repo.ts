@@ -2,13 +2,13 @@ import { PostgresService } from '../services/postgres.service';
 import { ICloudInstance, CloudInstanceModel, CloudInstanceStatus } from '../models/cloud-instance.model';
 import { zipObject, isEmpty } from 'lodash';
 
-export const CloudInstanceTableName = `cloudinstances_${process.env.NODE_ENV}`;
+export const CloudInstanceTableName = process.env.NODE_ENV ? `cloudinstances_${process.env.NODE_ENV}` : 'cloudinstances_unknown';
 
 export class CloudInstanceRepo {
     private _postgresService: PostgresService;
 
-    constructor(postgresService: PostgresService) {
-        this._postgresService = postgresService;
+    constructor() {
+        this._postgresService = PostgresService.getInstance();
     }
 
     async all(): Promise<ICloudInstance[]> {
@@ -71,6 +71,17 @@ export class CloudInstanceRepo {
             const exec = await this._postgresService.client
                 .query(
                     `DELETE from ${CloudInstanceTableName} where _id = '${_id}'`
+                );
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async clear() {
+        try {
+            const exec = await this._postgresService.client
+                .query(
+                    `TRUNCATE ${CloudInstanceTableName}`
                 );
         } catch (e) {
             console.error(e);

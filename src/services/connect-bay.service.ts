@@ -1,7 +1,6 @@
 import net, { Server, Socket } from 'net';
 import { v4 } from 'uuid';
 import { CloudInstanceModel } from '../models/cloud-instance.model';
-import { PostgresService } from './postgres.service';
 import { CloudInstanceRepo } from '../repository/cloud-instance.repo';
 
 declare module 'net' {
@@ -15,8 +14,8 @@ export class ConnectBayService {
     private _cloudInstanceWebSocketServer: Server;
     private _cloudInstanceRepo: CloudInstanceRepo;
 
-    constructor(postgresService: PostgresService, cloudInstancePort: number) {
-        this._cloudInstanceRepo = new CloudInstanceRepo(postgresService);
+    constructor(cloudInstancePort: number) {
+        this._cloudInstanceRepo = new CloudInstanceRepo();
         this._createServer(cloudInstancePort);
     }
 
@@ -31,7 +30,7 @@ export class ConnectBayService {
 
             socket.id = v4();
 
-            const cloudInstance = new CloudInstanceModel(this._cloudInstanceRepo, socket.id);
+            const cloudInstance = new CloudInstanceModel(socket.id);
             socket.on('data', (data: Buffer) => {
                 try {
                     // todo: validate message before handling it

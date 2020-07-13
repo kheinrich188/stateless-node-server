@@ -1,32 +1,32 @@
 import express, { Application } from 'express';
-import { PostgresService } from './services/postgres.service';
 import { ConnectBayService } from './services/connect-bay.service';
 import { CloudInstanceRepo } from './repository/cloud-instance.repo';
 import { Routes } from './routes/routes';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 
+// create server
+const app: Application = express();
+
 // initialize configuration
 dotenv.config();
+
+// bootstrap
+app.use(bodyParser.json());
 
 // env
 const appPort = process.env.APP_PORT || 3000;
 const cloudInstancePort = Number(process.env.CLOUD_INSTANCE_PORT) || 9999;
 
-const app: Application = express();
-const postgresService = new PostgresService();
+// initiate cloudInstance repo that holds information of external servers
+const cloudInstanceRepo = new CloudInstanceRepo();
 
-app.use(bodyParser.json());
+// setup routes for controllers
+Routes.setupRoutes(app);
 
-const cloudInstanceRepo = new CloudInstanceRepo(postgresService);
-
-const routes = new Routes(cloudInstanceRepo);
-routes.setupRoutes(app);
-
+// starts application
 (async () => {
-    await postgresService.connect();
-
-    const _ = new ConnectBayService(postgresService, cloudInstancePort);
+    const _ = new ConnectBayService(cloudInstancePort);
 
     app.listen(appPort, () => {
         console.log(`App is running in http://localhost:${appPort}`);

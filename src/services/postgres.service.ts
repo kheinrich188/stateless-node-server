@@ -2,22 +2,34 @@ import { Client } from 'ts-postgres';
 import { CloudInstanceTableName } from '../repository/cloud-instance.repo';
 
 export class PostgresService {
+    private static instance: PostgresService;
     private readonly _client: Client;
 
     get client(): Client {
         return this._client;
     }
 
-    constructor() {
+    static getInstance(): PostgresService {
+        if (!PostgresService.instance) {
+            PostgresService.instance = new PostgresService();
+        }
+
+        return PostgresService.instance;
+    }
+
+    private constructor() {
         const host = process.env.POSTGRES_HOST || 'localhost';
         const port = Number(process.env.POSTGRESPORT) || 5432;
         const user = process.env.POSTGRES_USER || 'postgres';
         const password = process.env.POSTGRES_PW || '';
         const database = process.env.POSTGRES_DB || 'postgres';
         this._client = new Client({ host, port, user, password, database });
+        (async () => {
+            await this.connect();
+        })();
     }
 
-    async connect(): Promise<void> {
+    private async connect(): Promise<void> {
         return this._client.connect()
             .then(() => {
                 console.log('postgres connected');
@@ -28,7 +40,7 @@ export class PostgresService {
             });
     }
 
-    createTables() {
+    private createTables() {
         try {
             this.client.query(
                 `CREATE TABLE ${CloudInstanceTableName}
