@@ -1,4 +1,4 @@
-import {afterEach, beforeEach, describe, it} from 'mocha';
+import { afterEach, beforeEach, describe, it } from 'mocha';
 import { expect } from 'chai';
 import { CloudInstanceRepo } from '../../src/repository/cloud-instance.repo';
 

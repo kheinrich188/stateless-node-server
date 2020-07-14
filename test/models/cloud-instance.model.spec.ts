@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, it } from 'mocha';
-import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import chai, { expect } from 'chai';
 import {
@@ -34,7 +33,6 @@ describe('CloudInstance Model', () => {
         await model.handleMessage(cm);
         expect(model.ip).eq('i-1234.domain.tech');
         const all = await repo.all();
-        console.error(all);
         const storedItem = _.first(all);
         expect(storedItem.ip).eq('i-1234.domain.tech');
     });
