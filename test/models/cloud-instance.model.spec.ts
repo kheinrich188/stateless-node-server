@@ -36,6 +36,6 @@ describe('CloudInstance Model', () => {
         const all = await repo.all();
         console.error(all);
         const storedItem = _.first(all);
-        expect(storedItem.ip).eq('');
+        expect(storedItem.ip).eq('i-1234.domain.tech');
     });
 });
