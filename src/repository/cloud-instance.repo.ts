@@ -2,19 +2,19 @@ import { PostgresService } from '../services/postgres.service';
 import { zipObject, isEmpty } from 'lodash';
 import moment from 'moment';
 import { CloudInstanceStatus, ICloudInstance } from '../models/cloud-instance/cloud-instance.definitions';
+import { Client } from 'ts-postgres';
 
 export const CloudInstanceTableName = process.env.NODE_ENV ? `cloudinstances_${process.env.NODE_ENV}` : 'cloudinstances_unknown';
 
 export class CloudInstanceRepo {
-    private _postgresService: PostgresService;
-
+    private _dbClient: Client;
     constructor() {
-        this._postgresService = PostgresService.getInstance();
+        this._dbClient = PostgresService.getInstance().client;
     }
 
     async all(): Promise<ICloudInstance[]> {
         try {
-            const result = await this._postgresService.client
+            const result = await this._dbClient
                 .query(`SELECT * FROM ${CloudInstanceTableName}`);
 
             const jsonResult: ICloudInstance[] = [];
@@ -35,7 +35,7 @@ export class CloudInstanceRepo {
             if (!isEmpty(existingServer)) {
                 await this.updateIp(existingServer.ip, ip);
             } else {
-                await this._postgresService.client
+                await this._dbClient
                     .query(
                         `INSERT INTO 
                                 ${CloudInstanceTableName} 
@@ -59,7 +59,7 @@ export class CloudInstanceRepo {
 
     async updateStatus(_id: string, status: CloudInstanceStatus) {
         try {
-            await this._postgresService.client
+            await this._dbClient
                 .query(
                     `UPDATE ${CloudInstanceTableName} SET status = ${status} where _id = '${_id}'`
                 );
@@ -70,7 +70,7 @@ export class CloudInstanceRepo {
 
     async updateId(_id: string, newId: string) {
         try {
-            await this._postgresService.client
+            await this._dbClient
                 .query(
                     `UPDATE ${CloudInstanceTableName} SET _id = '${newId}' where _id = '${_id}'`
                 );
@@ -81,7 +81,7 @@ export class CloudInstanceRepo {
 
     async updateIp(ip: string, newIp: string) {
         try {
-            await this._postgresService.client
+            await this._dbClient
                 .query(
                     `UPDATE ${CloudInstanceTableName} SET ip = '${newIp}' where ip = '${ip}'`
                 );
@@ -92,7 +92,7 @@ export class CloudInstanceRepo {
 
     async delete(ip: string) {
         try {
-            const exec = await this._postgresService.client
+            const exec = await this._dbClient
                 .query(
                     `DELETE from ${CloudInstanceTableName} where ip = '${ip}'`
                 );
@@ -103,7 +103,7 @@ export class CloudInstanceRepo {
 
     async clear() {
         try {
-            const exec = await this._postgresService.client
+            const exec = await this._dbClient
                 .query(
                     `TRUNCATE ${CloudInstanceTableName}`
                 );
@@ -114,7 +114,7 @@ export class CloudInstanceRepo {
 
     async get(_id: string): Promise<ICloudInstance> {
         try {
-            const exec = await this._postgresService.client
+            const exec = await this._dbClient
                 .query(
                     `SELECT * from ${CloudInstanceTableName} where _id = '${_id}'`
                 );
@@ -130,7 +130,7 @@ export class CloudInstanceRepo {
 
     async getBy(field: string, value: any): Promise<ICloudInstance> {
         try {
-            const exec = await this._postgresService.client
+            const exec = await this._dbClient
                 .query(
                     `SELECT * from ${CloudInstanceTableName} where ${field} = '${value}'`
                 );
