@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "node --inspect=5858 -r ts-node/register ./src/server.ts",
-    "start:watch": "nodemon",
+    "start:watch": "NODE_ENV=dev nodemon",
     "build": "tsc",
     "test": "NODE_ENV=test mocha -r ts-node/register test/**/*.spec.ts",
     "start-cloud-instance": "node -r ts-node/register ./external/cloud-instance.server.ts",

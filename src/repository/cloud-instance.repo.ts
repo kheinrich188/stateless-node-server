@@ -1,6 +1,7 @@
 import { PostgresService } from '../services/postgres.service';
-import { ICloudInstance, CloudInstanceModel, CloudInstanceStatus } from '../models/cloud-instance.model';
 import { zipObject, isEmpty } from 'lodash';
+import moment from 'moment';
+import { CloudInstanceStatus, ICloudInstance } from '../models/cloud-instance/cloud-instance.definitions';
 
 export const CloudInstanceTableName = process.env.NODE_ENV ? `cloudinstances_${process.env.NODE_ENV}` : 'cloudinstances_unknown';
 
@@ -28,15 +29,27 @@ export class CloudInstanceRepo {
         }
     }
 
-    async create(serverModel: CloudInstanceModel) {
+    async create(ip: string, domain: string, port: string, type: string) {
         try {
-            const existingServer = await this.getBy('ip', serverModel.ip);
+            const existingServer = await this.getBy('ip', ip);
             if (!isEmpty(existingServer)) {
-                await this.updateId(existingServer._id, serverModel._id);
+                await this.updateIp(existingServer.ip, ip);
             } else {
                 await this._postgresService.client
                     .query(
-                        `INSERT INTO ${CloudInstanceTableName} (ip, _id, port, type, status, created_on) VALUES ('${serverModel.ip}', '${serverModel._id}', '${serverModel.port}', '${serverModel.type}', ${serverModel.status}, '${serverModel.created_on.format('YYYY-MM-DD HH:mm:ss')}')`
+                        `INSERT INTO 
+                                ${CloudInstanceTableName} 
+                              (ip, domain, port, type, status, creationDate) 
+                              VALUES 
+                                 (
+                                  '${ip}', 
+                                  '${domain}',
+                                  '${port}',
+                                  '${type}',
+                                  ${CloudInstanceStatus.Waiting},
+                                  '${moment().format('YYYY-MM-DD HH:mm:ss')}'
+                                  )
+                              `
                     );
             }
         } catch (e) {
@@ -66,11 +79,22 @@ export class CloudInstanceRepo {
         }
     }
 
-    async delete(_id: string) {
+    async updateIp(ip: string, newIp: string) {
+        try {
+            await this._postgresService.client
+                .query(
+                    `UPDATE ${CloudInstanceTableName} SET ip = '${newIp}' where ip = '${ip}'`
+                );
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async delete(ip: string) {
         try {
             const exec = await this._postgresService.client
                 .query(
-                    `DELETE from ${CloudInstanceTableName} where _id = '${_id}'`
+                    `DELETE from ${CloudInstanceTableName} where ip = '${ip}'`
                 );
         } catch (e) {
             console.error(e);

@@ -45,13 +45,13 @@ export class PostgresService {
             this.client.query(
                 `CREATE TABLE ${CloudInstanceTableName}
                  (
-                     id         serial PRIMARY KEY,
-                     _id        VARCHAR(355) UNIQUE NOT NULL,
-                     ip         VARCHAR(355) UNIQUE NOT NULL,
-                     port       VARCHAR(355)        NOT NULL,
-                     type       VARCHAR(355)        NOT NULL,
-                     status     INT                 NOT NULL,
-                     created_on TIMESTAMP           NOT NULL
+                     id           serial PRIMARY KEY,
+                     ip           VARCHAR(355) UNIQUE NOT NULL,
+                     domain       VARCHAR(355)        NOT NULL,
+                     port         VARCHAR(355)        NOT NULL,
+                     type         VARCHAR(355)        NOT NULL,
+                     status       INT                 NOT NULL,
+                     creationDate TIMESTAMP           NOT NULL
                  );`
             );
         } catch (e) {

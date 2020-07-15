@@ -3,13 +3,13 @@ import { ConnectBayService } from './services/connect-bay.service';
 import { CloudInstanceRepo } from './repository/cloud-instance.repo';
 import { Routes } from './routes/routes';
 import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
+import dotEnv from 'dotenv';
 
 // create server
 const app: Application = express();
 
 // initialize configuration
-dotenv.config();
+dotEnv.config();
 
 // bootstrap
 app.use(bodyParser.json());

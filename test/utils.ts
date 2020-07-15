@@ -1,4 +1,7 @@
-import { CloudInstanceMessageTypes, ICloudInstanceConnectMessage } from '../src/models/cloud-instance.model';
+import {
+    CloudInstanceMessageTypes,
+    ICloudInstanceConnectMessage
+} from '../src/models/cloud-instance/cloud-instance.definitions';
 
 export const defaultCloudIP = () => {
     return 'i-1234.domain.tech?instanceType=bigOne';

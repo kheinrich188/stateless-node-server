@@ -106,9 +106,9 @@ server.on('data', data => {
     try {
         const jsonData = JSON.parse(data.toString());
         if (jsonData.type === 'ping') {
-            server.write(JSON.stringify({ type: 'pong' }), err => {
-                if (err !== undefined) {
-                    console.error(err);
+            server.write(JSON.stringify({ type: 'pong' }), writeError => {
+                if (writeError) {
+                    console.error(writeError);
                 }
             });
         }

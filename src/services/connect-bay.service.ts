@@ -1,65 +1,76 @@
 import net, { Server, Socket } from 'net';
-import { v4 } from 'uuid';
-import { CloudInstanceModel } from '../models/cloud-instance.model';
 import { CloudInstanceRepo } from '../repository/cloud-instance.repo';
+import { ServerConnectHandler } from '../models/cloud-instance/server-connect.handler';
+import { HeartBeatHandler } from '../models/cloud-instance/heartBeat.handler';
+import _ from 'lodash';
+import { UserStateHandler } from '../models/cloud-instance/user-state.handler';
 
 declare module 'net' {
     interface Socket {
-        id: string;
+        ip: string;
         heartBeatInterval?: NodeJS.Timeout;
     }
 }
 
 export class ConnectBayService {
-    private _cloudInstanceWebSocketServer: Server;
-    private _cloudInstanceRepo: CloudInstanceRepo;
-
     constructor(cloudInstancePort: number) {
-        this._cloudInstanceRepo = new CloudInstanceRepo();
         this._createServer(cloudInstancePort);
     }
 
     private _createServer(serverPort: number) {
-        this._cloudInstanceWebSocketServer = net.createServer((socket) => {
+        const server = net.createServer((socket) => {
+            const serverConnectHandler = new ServerConnectHandler();
+            const heartBeatHandler = new HeartBeatHandler();
+            const userStateHandler = new UserStateHandler();
+
+            serverConnectHandler
+                .setNext(userStateHandler);
+
             socket.heartBeatInterval = null;
+
             socket.setNoDelay();
+
             socket.setTimeout(10000, () => {
                 clearInterval(socket.heartBeatInterval);
-                this._clearServerConnection(socket.id, 'Socket timeout');
+                this._clearServerConnection(socket.ip, 'Socket timeout');
             });
 
-            socket.id = v4();
-
-            const cloudInstance = new CloudInstanceModel(socket.id);
             socket.on('data', (data: Buffer) => {
                 try {
                     // todo: validate message before handling it
-                    cloudInstance.handleMessage(data);
+                    (async () => {
+                        const result = await heartBeatHandler.handle(data.toString());
+                        const ip = await serverConnectHandler.handle(data.toString());
+                        if (!_.isEmpty(ip)) {
+                            socket.ip = ip;
+                        }
+                        console.error(result);
+                    })();
                 } catch (e) {
-                    console.error(socket.id, 'socket:data', e);
+                    console.error(socket.ip, 'socket:data', e);
                     socket.emit('close', 1008, 'Cannot parse');
                 }
             });
             socket.on('error', (error) => {
-                this._clearServerConnection(socket.id, error.message);
+                this._clearServerConnection(socket.ip, error.message);
                 // socket.destroy();
             });
             socket.on('end', () => {
                 clearInterval(socket.heartBeatInterval);
-                this._clearServerConnection(socket.id, 'Socket end');
+                this._clearServerConnection(socket.ip, 'Socket end');
             });
             socket.on('close', () => {
                 clearInterval(socket.heartBeatInterval);
-                this._clearServerConnection(socket.id, 'Socket close');
+                this._clearServerConnection(socket.ip, 'Socket close');
             });
 
             socket.on('disconnect', () => {
-                this._clearServerConnection(socket.id, 'Socket disconnect');
+                this._clearServerConnection(socket.ip, 'Socket disconnect');
             });
 
             socket.on('timeout', () => {
                 clearInterval(socket.heartBeatInterval);
-                this._clearServerConnection(socket.id, 'Socket timeout');
+                this._clearServerConnection(socket.ip, 'Socket timeout');
             });
 
             this._hearthBeat(socket);
@@ -67,25 +78,26 @@ export class ConnectBayService {
             console.error(error.message);
         });
 
-        this._cloudInstanceWebSocketServer.listen(serverPort, () => {
+        server.listen(serverPort, () => {
             console.info(`Server Bay starts at ws://localhost:${serverPort}`);
         });
     }
 
     private _hearthBeat(socket: Socket) {
         socket.heartBeatInterval = setInterval(() => {
-            socket.write(JSON.stringify({ type: 'ping' }), (err) => {
-                if (err !== undefined) {
-                    this._clearServerConnection(socket.id, 'Socket message error');
+            socket.write(JSON.stringify({ type: 'ping' }), writeError => {
+                if (writeError) {
+                    this._clearServerConnection(socket.ip, `Socket message error ${writeError}`);
                 }
             });
         }, 1000);
     }
 
-    private _clearServerConnection(socketId: string, message: string) {
-        console.info(socketId, message);
+    private _clearServerConnection(cloudInstanceIp: string, message: string) {
+        console.info(cloudInstanceIp, message);
         (async () => {
-            await this._cloudInstanceRepo.delete(socketId);
+            const cloudRepo = new CloudInstanceRepo();
+            await cloudRepo.delete(cloudInstanceIp);
         })();
     }
 }
