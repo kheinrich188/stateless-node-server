@@ -1,7 +1,7 @@
-import net, { Server, Socket } from 'net';
+import net, { Socket } from 'net';
 import { CloudInstanceRepo } from '../repository/cloud-instance.repo';
 import { ServerConnectHandler } from '../models/cloud-instance/server-connect.handler';
-import { HeartBeatHandler } from '../models/cloud-instance/heartBeat.handler';
+import { ServerPongHandler } from '../models/cloud-instance/server-pong.handler';
 import _ from 'lodash';
 import { UserStateHandler } from '../models/cloud-instance/user-state.handler';
 
@@ -20,7 +20,7 @@ export class ConnectBayService {
     private _createServer(serverPort: number) {
         const server = net.createServer((socket) => {
             const serverConnectHandler = new ServerConnectHandler();
-            const heartBeatHandler = new HeartBeatHandler();
+            const heartBeatHandler = new ServerPongHandler();
             const userStateHandler = new UserStateHandler();
 
             serverConnectHandler
@@ -97,7 +97,7 @@ export class ConnectBayService {
         console.info(cloudInstanceIp, message);
         (async () => {
             const cloudRepo = new CloudInstanceRepo();
-            await cloudRepo.delete(cloudInstanceIp);
+            await cloudRepo.deleteByIp(cloudInstanceIp);
         })();
     }
 }

@@ -1,8 +1,12 @@
-node_modules
-/.idea
+node_modules/
 logs/
 dist/
 .DS_Store
 *.zip
 /.project
 /.env
+.idea/
+.vscode/
+build/
+tmp/
+temp/

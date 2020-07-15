@@ -1,5 +1,9 @@
 import { AbstractHandler } from '../abstract-handler';
-import { CloudInstanceMessageTypes, ICloudInstanceMessage } from './cloud-instance.definitions';
+import { CloudInstanceMessageTypes, ICloudInstanceMessage } from '../../entity/cloud-instance.entity';
+
+export interface ICloudInstanceConnectionMessage extends ICloudInstanceMessage {
+    token: string;
+}
 
 export class UserStateHandler extends AbstractHandler {
     public async handle(request): Promise<string> {

@@ -1,11 +1,11 @@
 import { AbstractHandler } from '../abstract-handler';
-import {
-    CloudInstanceMessageTypes,
-    ICloudInstanceMessage,
-    ICloudInstancePongMessage
-} from './cloud-instance.definitions';
+import { CloudInstanceMessageTypes, ICloudInstanceMessage } from '../../entity/cloud-instance.entity';
 
-export class HeartBeatHandler extends AbstractHandler {
+export interface ICloudInstancePongMessage extends ICloudInstanceMessage {
+    id: string;
+}
+
+export class ServerPongHandler extends AbstractHandler {
     private _timer: NodeJS.Timeout;
     public async handle(request): Promise<string> {
         try {

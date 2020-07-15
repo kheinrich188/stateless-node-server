@@ -1,146 +1,27 @@
-import { PostgresService } from '../services/postgres.service';
-import { zipObject, isEmpty } from 'lodash';
-import moment from 'moment';
-import { CloudInstanceStatus, ICloudInstance } from '../models/cloud-instance/cloud-instance.definitions';
-import { Client } from 'ts-postgres';
+import { getRepository } from 'typeorm';
+import { CloudInstanceEntity } from '../entity/cloud-instance.entity';
+import BaseRepository from './base/base.repo';
+import _ from 'lodash';
 
-export const CloudInstanceTableName = process.env.NODE_ENV ? `cloudinstances_${process.env.NODE_ENV}` : 'cloudinstances_unknown';
-
-export class CloudInstanceRepo {
-    private _dbClient: Client;
+export class CloudInstanceRepo extends BaseRepository<CloudInstanceEntity> {
     constructor() {
-        this._dbClient = PostgresService.getInstance().client;
+        super(CloudInstanceEntity);
     }
 
-    async all(): Promise<ICloudInstance[]> {
-        try {
-            const result = await this._dbClient
-                .query(`SELECT * FROM ${CloudInstanceTableName}`);
+    async create(ip: string, domain: string, port: string, type: string): Promise<void> {
+        const existingInstance = await getRepository(CloudInstanceEntity).findOne({ ip });
+        if (_.isEmpty(existingInstance)) {
+            const instance = await getRepository(CloudInstanceEntity)
+                .create({ ip, domain, port, type });
 
-            const jsonResult: ICloudInstance[] = [];
-
-            for (const row of result) {
-                const am = zipObject(row.names, row.data) as unknown as ICloudInstance;
-                jsonResult.push(am);
-            }
-            return jsonResult;
-        } catch (e) {
-            console.error(e);
+            await getRepository(CloudInstanceEntity).save(instance);
+        } else {
+            await getRepository(CloudInstanceEntity)
+                .update(existingInstance.id, { ip, domain, port, type });
         }
     }
 
-    async create(ip: string, domain: string, port: string, type: string) {
-        try {
-            const existingServer = await this.getBy('ip', ip);
-            if (!isEmpty(existingServer)) {
-                await this.updateIp(existingServer.ip, ip);
-            } else {
-                await this._dbClient
-                    .query(
-                        `INSERT INTO 
-                                ${CloudInstanceTableName} 
-                              (ip, domain, port, type, status, creationDate) 
-                              VALUES 
-                                 (
-                                  '${ip}', 
-                                  '${domain}',
-                                  '${port}',
-                                  '${type}',
-                                  ${CloudInstanceStatus.Waiting},
-                                  '${moment().format('YYYY-MM-DD HH:mm:ss')}'
-                                  )
-                              `
-                    );
-            }
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    async updateStatus(_id: string, status: CloudInstanceStatus) {
-        try {
-            await this._dbClient
-                .query(
-                    `UPDATE ${CloudInstanceTableName} SET status = ${status} where _id = '${_id}'`
-                );
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    async updateId(_id: string, newId: string) {
-        try {
-            await this._dbClient
-                .query(
-                    `UPDATE ${CloudInstanceTableName} SET _id = '${newId}' where _id = '${_id}'`
-                );
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    async updateIp(ip: string, newIp: string) {
-        try {
-            await this._dbClient
-                .query(
-                    `UPDATE ${CloudInstanceTableName} SET ip = '${newIp}' where ip = '${ip}'`
-                );
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    async delete(ip: string) {
-        try {
-            const exec = await this._dbClient
-                .query(
-                    `DELETE from ${CloudInstanceTableName} where ip = '${ip}'`
-                );
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    async clear() {
-        try {
-            const exec = await this._dbClient
-                .query(
-                    `TRUNCATE ${CloudInstanceTableName}`
-                );
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    async get(_id: string): Promise<ICloudInstance> {
-        try {
-            const exec = await this._dbClient
-                .query(
-                    `SELECT * from ${CloudInstanceTableName} where _id = '${_id}'`
-                );
-            let result: ICloudInstance;
-            for (const row of exec) {
-                result = zipObject(row.names, row.data) as unknown as ICloudInstance;
-            }
-            return result;
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    async getBy(field: string, value: any): Promise<ICloudInstance> {
-        try {
-            const exec = await this._dbClient
-                .query(
-                    `SELECT * from ${CloudInstanceTableName} where ${field} = '${value}'`
-                );
-            let result: ICloudInstance;
-            for (const row of exec) {
-                result = zipObject(row.names, row.data) as unknown as ICloudInstance;
-            }
-            return result;
-        } catch (e) {
-            console.error(e);
-        }
+    async deleteByIp(ip: string) {
+        return await getRepository(CloudInstanceEntity).delete({ ip });
     }
 }

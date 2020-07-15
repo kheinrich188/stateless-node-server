@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { CloudInstanceRepo } from '../repository/cloud-instance.repo';
 import { isEmpty } from 'lodash';
-import { CloudInstanceStatus } from '../models/cloud-instance/cloud-instance.definitions';
+import { CloudInstanceStatus } from '../entity/cloud-instance.entity';
 
 export class ApiController {
     async state(req: Request, res: Response) {
