@@ -34,11 +34,9 @@ NODE_ENV=dev
 # Node.js server configuration
 APP_PORT=3000
 CLOUD_INSTANCE_PORT=9999
-POSTGRES_PORT=5432
-POSTGRES_USER=postgres
-POSTGRES_PW=
-POSTGRES_HOST=localhost
-POSTGRES_DB=postgres
+
+# DB Configuration 
+ormconfig.json 
 ```
 
 Nun sollte in der Konsole eine Tabelle zu sehen sein in dem der Status deiner Instanz gehalten wird. 
