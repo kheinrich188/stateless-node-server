@@ -28,10 +28,10 @@ Starten der lokalen Cloud Instanz
 
 Folgende Variablen können mit einer `.env` Datei überschrieben werden: 
 ```
-# Set to production when deploying to production
+# Set to production when deploying to productive system
 NODE_ENV=dev
 
-# Node.js server configuration
+# server.ts configuration
 APP_PORT=3000
 CLOUD_INSTANCE_PORT=9999
 
