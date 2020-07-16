@@ -1,6 +1,7 @@
 node_modules/
 logs/
 dist/
+coverage/
 .DS_Store
 *.zip
 /.project
@@ -10,3 +11,4 @@ dist/
 build/
 tmp/
 temp/
+/.nyc_output

@@ -1,0 +1,31 @@
+{
+  "cache": false,
+  "check-coverage": false,
+  "extension": [
+    ".ts"
+  ],
+  "include": [
+    "**/*.js",
+    "**/*.ts"
+  ],
+  "exclude": [
+    "external/**",
+    "test/**",
+    "coverage/**",
+    "node_modules/**",
+    "src/entity/**",
+    "src/routes/**",
+    "src/migration/**",
+    "src/server.ts",
+    "**/*.d.ts",
+    "**/*.test.ts"
+  ],
+  "sourceMap": true,
+  "reporter": [
+    "html",
+    "text",
+    "text-summary"
+  ],
+  "all": true,
+  "instrument": true
+}

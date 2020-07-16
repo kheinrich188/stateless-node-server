@@ -10,13 +10,12 @@ export class UserStateHandler extends AbstractHandler {
         try {
             const cloudInstanceMessage = JSON.parse(request) as ICloudInstanceMessage;
             if (cloudInstanceMessage.type === CloudInstanceMessageTypes.clientConnected) {
-                return `UserStateHandler: I'll handle client connect: ${request}`;
+                return Promise.resolve(`UserStateHandler: I'll handle client connect: ${request}`);
             }
             if (cloudInstanceMessage.type === CloudInstanceMessageTypes.clientDisconnected) {
-                return `UserStateHandler: I'll handle client disconnect: ${request}`;
+                return Promise.resolve(`UserStateHandler: I'll handle client disconnect: ${request}`);
             }
         } catch (e) {
-            console.error(e);
             return super.handle(request);
         }
         return super.handle(request);

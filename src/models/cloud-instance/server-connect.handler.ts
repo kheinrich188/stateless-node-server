@@ -24,7 +24,6 @@ export class ServerConnectHandler extends AbstractHandler {
                 return ip;
             }
         } catch (e) {
-            console.error(e);
             return super.handle(request);
         }
         return super.handle(request);

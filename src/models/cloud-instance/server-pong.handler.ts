@@ -22,7 +22,6 @@ export class ServerPongHandler extends AbstractHandler {
                 return Promise.resolve<string>(`HeartBeatHandler: I'll process the ${request}.`);
             }
         } catch (e) {
-            console.error(e);
             return super.handle(request);
         }
         return super.handle(request);
