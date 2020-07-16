@@ -20,8 +20,10 @@ export class ServerConnectHandler extends AbstractHandler {
                 const domain = ip.split(':')[0];
                 const type = connectMessage.address.split('?')[1] || '';
                 const port = connectMessage.port;
+
                 await cloudInstanceRepo.create(ip, domain, port, type);
-                return ip;
+
+                return Promise.resolve(ip);
             }
         } catch (e) {
             return super.handle(request);
