@@ -1,3 +1,5 @@
+![Node.js CI](https://github.com/kheinrich188/stateless-node-server/workflows/Node.js%20CI/badge.svg)
+
 # Stateless Node Server
 
 ## Einleitung
