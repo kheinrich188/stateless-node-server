@@ -18,7 +18,7 @@ export class ServerConnectHandler extends AbstractHandler {
 
                 const ip = connectMessage.address.split('?')[0];
                 const domain = ip.split(':')[0];
-                const type = connectMessage.address.split('?')[1];
+                const type = connectMessage.address.split('?')[1] || '';
                 const port = connectMessage.port;
                 await cloudInstanceRepo.create(ip, domain, port, type);
                 return ip;

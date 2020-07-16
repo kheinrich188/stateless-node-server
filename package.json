@@ -6,7 +6,8 @@
     "start": "node --inspect=5858 -r ts-node/register ./src/server.ts",
     "start:watch": "NODE_ENV=dev nodemon",
     "build": "tsc",
-    "test": "NODE_ENV=test mocha -r ts-node/register test/**/*.spec.ts",
+    "postgres:migraton": "typeorm migration:generate -n _name_Refactoring",
+    "test": "NODE_ENV=test mocha -r ts-node/register test/**/*.spec.ts test/**/**/*.spec.ts --exit",
     "start-cloud-instance": "node -r ts-node/register ./external/cloud-instance.server.ts",
     "start-user-client": "node -r ts-node/register ./external/user.client.ts"
   },

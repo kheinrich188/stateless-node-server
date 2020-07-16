@@ -1,5 +1,5 @@
 import { getRepository } from 'typeorm';
-import { CloudInstanceEntity } from '../entity/cloud-instance.entity';
+import { CloudInstanceEntity, CloudInstanceStatus } from '../entity/cloud-instance.entity';
 import BaseRepository from './base/base.repo';
 import _ from 'lodash';
 
@@ -18,6 +18,28 @@ export class CloudInstanceRepo extends BaseRepository<CloudInstanceEntity> {
         } else {
             await getRepository(CloudInstanceEntity)
                 .update(existingInstance.id, { ip, domain, port, type });
+        }
+    }
+
+    async getWaitingInstances(): Promise<CloudInstanceEntity[]> {
+        return await getRepository(CloudInstanceEntity).find({ status: CloudInstanceStatus.Waiting });
+    }
+
+    async getWaitingInstance(): Promise<CloudInstanceEntity> {
+        return await getRepository(CloudInstanceEntity).findOne({ status: CloudInstanceStatus.Waiting });
+    }
+
+    async findByIp(ip: string): Promise<CloudInstanceEntity> {
+        return await getRepository(CloudInstanceEntity).findOne({ ip });
+    }
+
+    async updateStatus(ip: string, status: CloudInstanceStatus) {
+        const toUpdate = await this.findByIp(ip);
+        if (toUpdate.status !== status) {
+            await getRepository(CloudInstanceEntity)
+                .update(toUpdate.id, { status });
+        } else {
+            throw new Error('status already set');
         }
     }
 

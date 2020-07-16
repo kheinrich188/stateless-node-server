@@ -23,11 +23,14 @@ const cloudInstancePort = Number(process.env.CLOUD_INSTANCE_PORT) || 9999;
 // setup routes for controllers
 Routes.setupRoutes(app);
 
+const postgresService = new PostgresService();
+const cloudInstanceRepo = new CloudInstanceRepo();
+
 // starts application
 (async () => {
-    await new PostgresService().connect();
+    // connect to db
+    await postgresService.connect();
 
-    const cloudInstanceRepo = new CloudInstanceRepo();
     const _ = new ConnectBayService(cloudInstancePort);
 
     app.listen(appPort, () => {

@@ -95,9 +95,11 @@ export class ConnectBayService {
 
     private _clearServerConnection(cloudInstanceIp: string, message: string) {
         console.info(cloudInstanceIp, message);
-        (async () => {
-            const cloudRepo = new CloudInstanceRepo();
-            await cloudRepo.deleteByIp(cloudInstanceIp);
-        })();
+        if (!_.isEmpty(cloudInstanceIp)) {
+            (async () => {
+                const cloudRepo = new CloudInstanceRepo();
+                await cloudRepo.deleteByIp(cloudInstanceIp);
+            })();
+        }
     }
 }
