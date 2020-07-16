@@ -4,7 +4,7 @@ import { CloudInstanceRepo } from '../../src/repository/cloud-instance.repo';
 import { PostgresService } from '../../src/services/postgres.service';
 import { CloudInstanceStatus } from '../../src/entity/cloud-instance.entity';
 
-describe('CloudInstance Postgres Repo', () => {
+describe('CloudInstanceRepo', () => {
     const ciRepo = new CloudInstanceRepo();
 
     before(async () => {

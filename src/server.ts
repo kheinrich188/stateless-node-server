@@ -6,6 +6,8 @@ import { Routes } from './routes/routes';
 import bodyParser from 'body-parser';
 import dotEnv from 'dotenv';
 import { PostgresService } from './services/postgres.service';
+import { errorMonitor } from 'events';
+import _ from 'lodash';
 
 // create server
 const app: Application = express();
@@ -25,13 +27,22 @@ Routes.setupRoutes(app);
 
 const postgresService = new PostgresService();
 const cloudInstanceRepo = new CloudInstanceRepo();
+const connectBay = new ConnectBayService();
 
 // starts application
 (async () => {
     // connect to db
     await postgresService.connect();
 
-    const _ = new ConnectBayService(cloudInstancePort);
+    connectBay.openCloudInstanceConnections()
+        .subscribe((status) => {
+            console.log(status);
+        }, async (error) => {
+            console.error(error);
+            if (!_.isEmpty(error.ip)) {
+                await cloudInstanceRepo.deleteByIp(error.ip);
+            }
+        });
 
     app.listen(appPort, () => {
         console.log(`App is running in http://localhost:${appPort}`);
