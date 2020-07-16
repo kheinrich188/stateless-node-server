@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, it } from 'mocha';
 import { expect } from 'chai';
 import { ServerConnectHandler } from '../../../src/models/cloud-instance/server-connect.handler';
-import sinon, { assert, SinonSpy, SinonStub } from 'sinon';
+import sinon, { assert, SinonStub } from 'sinon';
 import { CloudInstanceRepo } from '../../../src/repository/cloud-instance.repo';
 import { clientConnectedMessage, connectMessage, defaultCloudIP } from '../../utils';
 

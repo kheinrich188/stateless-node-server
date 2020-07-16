@@ -85,7 +85,7 @@ export class ConnectBayService {
 
     private _hearthBeat(socket: Socket) {
         socket.heartBeatInterval = setInterval(() => {
-            socket.write(JSON.stringify({ type: 'ping' }), writeError => {
+            socket.write(JSON.stringify({ type: 'ping', ip: socket.ip }), writeError => {
                 if (writeError) {
                     this._clearServerConnection(socket.ip, `Socket message error ${writeError}`);
                 }

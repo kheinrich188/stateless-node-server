@@ -1,8 +1,9 @@
 import { AbstractHandler } from '../abstract-handler';
 import { CloudInstanceMessageTypes, ICloudInstanceMessage } from '../../entity/cloud-instance.entity';
+import { CloudInstanceRepo } from '../../repository/cloud-instance.repo';
 
 export interface ICloudInstancePongMessage extends ICloudInstanceMessage {
-    id: string;
+    ip: string;
 }
 
 export class ServerPongHandler extends AbstractHandler {
@@ -14,9 +15,11 @@ export class ServerPongHandler extends AbstractHandler {
                 const pongMessage = JSON.parse(request) as ICloudInstancePongMessage;
                 clearTimeout(this._timer);
                 this._timer = setTimeout((args: ICloudInstancePongMessage) => {
-                    return `HeartBeatHandler: I'll timeout the ${args.id}.`;
+                    console.error(`HeartBeatHandler: I'll timeout the ${args.ip}.`);
+                    const cloudInstanceRepo = new CloudInstanceRepo();
+                    cloudInstanceRepo.deleteByIp(args.ip);
                 }, 5000, pongMessage);
-                return `HeartBeatHandler: I'll process the ${request}.`;
+                return Promise.resolve<string>(`HeartBeatHandler: I'll process the ${request}.`);
             }
         } catch (e) {
             console.error(e);
