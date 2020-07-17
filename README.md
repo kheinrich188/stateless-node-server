@@ -1,4 +1,4 @@
-![Node.js CI](https://github.com/kheinrich188/stateless-node-server/workflows/Node.js%20CI/badge.svg)
+![Node.js CI](https://github.com/kheinrich188/stateless-node-server/workflows/TestsWithoutDBUsage/badge.svg)
 
 # Stateless Node Server
 
