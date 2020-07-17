@@ -8,7 +8,7 @@
     "build": "tsc",
     "postgres:migraton": "typeorm migration:generate -n _name_Refactoring",
     "test": "NODE_ENV=test mocha -r ts-node/register test/**/*.spec.ts test/**/**/*.spec.ts --exit",
-    "github:test": "mocha -r ts-node/register test/**/*.spec.ts test/**/**/*.spec.ts --exclude test/repository/**/*.spec.ts test/controller/**/*.spec.ts --exit",
+    "github:test": "mocha -r ts-node/register test/models/**/*.spec.ts --exit",
     "start-cloud-instance": "node -r ts-node/register ./external/cloud-instance.server.ts",
     "start-user-client": "node -r ts-node/register ./external/user.client.ts",
     "coverage": "nyc npm run test",
