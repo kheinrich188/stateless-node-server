@@ -6,9 +6,10 @@ import { CloudInstanceStatus } from '../../src/entity/cloud-instance.entity';
 
 describe('CloudInstanceRepo', () => {
     const ciRepo = new CloudInstanceRepo();
+    const postgresService = new PostgresService();
 
     before(async () => {
-        await new PostgresService().connect();
+        await postgresService.connect();
     });
 
     beforeEach(async () => {

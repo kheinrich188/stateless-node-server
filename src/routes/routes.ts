@@ -1,7 +1,7 @@
 import { Application } from 'express';
 import { ApiController } from '../controller/api.controller';
 
-const ROUTES = {
+export const ROUTES = {
     Api: {
         state: '/api/state',
         requestCloudInstance: '/api/requestCloudInstance'

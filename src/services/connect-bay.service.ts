@@ -14,7 +14,9 @@ declare module 'net' {
 
 export class ConnectBayService {
     openCloudInstanceConnections(): Observable<string> {
-        return new Observable((subscriber) => {
+        const CLOUD_INSTANCE_PORT = process.env.CLOUD_INSTANCE_PORT || 9999;
+
+        return new Observable<string>((subscriber) => {
             const server = net.createServer((socket) => {
                 const serverConnectHandler = new ServerConnectHandler();
                 const heartBeatHandler = new ServerPongHandler();
@@ -42,7 +44,7 @@ export class ConnectBayService {
                                 socket.ip = ip;
                                 subscriber.next(`New Instance connected: ${ip}`);
                             }
-                            console.info(result);
+                            console.debug(result);
                         })();
                     } catch (e) {
                         socket.emit('close', 1008, 'Cannot parse');
@@ -77,10 +79,8 @@ export class ConnectBayService {
                 }, 1000);
             });
 
-            const port = process.env.CLOUD_INSTANCE_PORT || 9999;
-
-            server.listen(port, () => {
-                subscriber.next(`Server Bay starts at ws://localhost:${port}`);
+            server.listen(CLOUD_INSTANCE_PORT, () => {
+                subscriber.next(`Server Bay starts at ws://localhost:${CLOUD_INSTANCE_PORT}`);
             });
         });
     }
