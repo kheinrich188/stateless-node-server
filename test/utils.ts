@@ -20,7 +20,8 @@ export const connectMessage = (connectedUser: string, address: string) => {
 export const clientConnectedMessage = (token: string) => {
     const m: ICloudInstanceConnectionMessage = {
         type: CloudInstanceMessageTypes.clientConnected,
-        token
+        token,
+        address: defaultCloudIP()
     };
     return Buffer.from(JSON.stringify(m));
 };
