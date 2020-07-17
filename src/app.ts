@@ -4,7 +4,7 @@ import { Routes } from './routes/routes';
 import { PostgresService } from './services/postgres.service';
 import { CloudInstanceRepo } from './repository/cloud-instance.repo';
 import { ConnectBayService } from './services/connect-bay.service';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 
 export default class App {
     public app: Application;
@@ -53,7 +53,7 @@ export default class App {
                 console.log(message);
             }, async (error) => {
                 console.error(error);
-                if (!_.isEmpty(error.ip)) {
+                if (!isEmpty(error.ip)) {
                     await cloudInstanceRepo.deleteByIp(error.ip);
                 }
             });

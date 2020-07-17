@@ -121,7 +121,8 @@ connect();
 const sendClientConnectedToBay = (client: IClient) => {
     const message = {
         type: 'clientConnected',
-        token: client.token
+        token: client.token,
+        address: serverPublicIp
     };
     server.write(JSON.stringify(message));
 };
@@ -129,7 +130,8 @@ const sendClientConnectedToBay = (client: IClient) => {
 const sendClientDisconnectedToBay = (client: IClient) => {
     const message = {
         type: 'clientDisconnected',
-        token: client.token
+        token: client.token,
+        address: serverPublicIp
     };
     server.write(JSON.stringify(message));
 };

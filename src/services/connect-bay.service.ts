@@ -1,7 +1,7 @@
 import net, { Socket } from 'net';
 import { ServerConnectHandler } from '../models/cloud-instance/server-connect.handler';
 import { ServerPongHandler } from '../models/cloud-instance/server-pong.handler';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 import { UserStateHandler } from '../models/cloud-instance/user-state.handler';
 import { Observable } from 'rxjs';
 
@@ -40,7 +40,7 @@ export class ConnectBayService {
                         (async () => {
                             const result = await heartBeatHandler.handle(data.toString());
                             const ip = await serverConnectHandler.handle(data.toString());
-                            if (!_.isEmpty(ip)) {
+                            if (!isEmpty(ip)) {
                                 socket.ip = ip;
                                 subscriber.next(`New Instance connected: ${ip}`);
                             }
