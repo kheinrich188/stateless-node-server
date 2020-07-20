@@ -28,7 +28,7 @@ Starte die Anwendung
 Starten der lokalen Cloud Instanz
 > `npm run start-cloud-instance`
 
-Folgende Variablen können mit einer `.env` Datei überschrieben werden: 
+#### Folgende Variablen *müssen* mit einer `.env` Datei gesetzt werden: 
 ```
 # Set to production when deploying to productive system
 NODE_ENV=dev
@@ -37,8 +37,21 @@ NODE_ENV=dev
 APP_PORT=3000
 CLOUD_INSTANCE_PORT=9999
 
-# DB Configuration 
-ormconfig.json 
+# typeorm configuration
+TYPEORM_CONNECTION = postgres
+TYPEORM_HOST = localhost
+TYPEORM_USERNAME = postgres
+TYPEORM_PASSWORD = ''
+TYPEORM_DATABASE = postgres
+TYPEORM_PORT = 5432
+TYPEORM_SYNCHRONIZE = true
+TYPEORM_LOGGING = false
+TYPEORM_ENTITIES = src/entity/**/*.ts
+TYPEORM_MIGRATIONS = src/migration/**/*.ts
+TYPEORM_SUBSCRIBERS = src/subscriber/**/*.ts
+TYPEORM_ENTITIES_DIR = src/entity
+TYPEORM_MIGRATIONS_DIR = src/migration
+TYPEORM_SUBSCRIBERS_DIR = src/subscriber
 ```
 
 Nun sollte in der Konsole eine Tabelle zu sehen sein in dem der Status deiner Instanz gehalten wird. 
