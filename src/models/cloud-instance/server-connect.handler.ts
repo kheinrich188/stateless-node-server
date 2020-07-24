@@ -1,6 +1,7 @@
 import { AbstractHandler } from '../abstract-handler';
 import { CloudInstanceRepo } from '../../repository/cloud-instance.repo';
 import { CloudInstanceMessageTypes, ICloudInstanceMessage } from '../../entity/cloud-instance.entity';
+import { log } from '../../services/logger.service';
 
 export interface ICloudInstanceConnectMessage extends ICloudInstanceMessage {
     address: string;
@@ -25,7 +26,8 @@ export class ServerConnectHandler extends AbstractHandler {
 
                 return Promise.resolve(ip);
             }
-        } catch (e) {
+        } catch (error) {
+            log.error('ServerConnectHandler', error);
             return super.handle(request);
         }
         return super.handle(request);

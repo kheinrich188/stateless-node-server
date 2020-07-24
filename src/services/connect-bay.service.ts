@@ -4,6 +4,7 @@ import { ServerPongHandler } from '../models/cloud-instance/server-pong.handler'
 import { isEmpty } from 'lodash';
 import { UserStateHandler } from '../models/cloud-instance/user-state.handler';
 import { Observable } from 'rxjs';
+import { log } from './logger.service';
 
 declare module 'net' {
     interface Socket {
@@ -44,7 +45,7 @@ export class ConnectBayService {
                                 socket.ip = ip;
                                 subscriber.next(`New Instance connected: ${ip}`);
                             }
-                            console.debug(result);
+                            log.debug(() => result);
                         })();
                     } catch (e) {
                         socket.emit('close', 1008, 'Cannot parse');

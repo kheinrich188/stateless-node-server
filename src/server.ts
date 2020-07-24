@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import dotEnv from 'dotenv';
 import App from './app';
+import { serverLog } from './services/logger.service';
 
 // initialize configuration
 dotEnv.config();
@@ -11,5 +12,5 @@ app.listen();
 
 // if something crashes last fetch here
 process.on('uncaughtException', (error: Error) => {
-    console.error(`FATAL: ${error.message}`);
+    serverLog.fatal(() => 'Server process', error);
 });

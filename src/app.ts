@@ -5,6 +5,7 @@ import { PostgresService } from './services/postgres.service';
 import { CloudInstanceRepo } from './repository/cloud-instance.repo';
 import { ConnectBayService } from './services/connect-bay.service';
 import { isEmpty } from 'lodash';
+import { log } from './services/logger.service';
 
 export default class App {
     public app: Application;
@@ -22,7 +23,7 @@ export default class App {
 
     public listen() {
         this.app.listen(this.port, () => {
-            console.log(`App listening on the port ${this.port}`);
+            log.info(() => `App listening on the port ${this.port}`);
         });
     }
 
@@ -43,16 +44,16 @@ export default class App {
 
         // connect to db
         await postgresService.connect()
-            .catch(reason => {
-                console.error(reason.message);
+            .catch(error => {
+                log.error(() => '_setupServices db connect', error);
             });
 
         // opens websocket server for cloud instances
         connectBay.openCloudInstanceConnections()
             .subscribe((message) => {
-                console.log(message);
+                log.debug(() => message);
             }, async (error) => {
-                console.error(error);
+                log.error(() => '_setupServices cloud instance ws', error);
                 if (!isEmpty(error.ip)) {
                     await cloudInstanceRepo.deleteByIp(error.ip);
                 }

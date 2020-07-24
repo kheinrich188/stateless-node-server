@@ -5,6 +5,7 @@ import {
     ICloudInstanceMessage
 } from '../../entity/cloud-instance.entity';
 import { CloudInstanceRepo } from '../../repository/cloud-instance.repo';
+import { log } from '../../services/logger.service';
 
 export interface ICloudInstanceConnectionMessage extends ICloudInstanceMessage {
     token: string;
@@ -26,7 +27,8 @@ export class UserStateHandler extends AbstractHandler {
 
                 return Promise.resolve(`UserStateHandler: I'll handle client disconnect: ${request}`);
             }
-        } catch (e) {
+        } catch (error) {
+            log.error('UserStateHandler', error);
             return super.handle(request);
         }
         return super.handle(request);
